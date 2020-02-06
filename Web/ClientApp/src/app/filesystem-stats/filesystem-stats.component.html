@@ -1,0 +1,14 @@
+<div>
+  <input type="text" [formControl]="pathControl" (keydown.enter)="viewFolders()" />
+  <button type="button" (click)="viewFolders()">View Folders</button>
+  <button type="button" (click)="viewFiles()">View Files</button>
+</div>
+<div>
+  <span>Path</span>
+  <span>{{itemPath}}</span>
+</div>
+<div>
+  <span>Size</span>
+  <span>{{itemSize | number}} bytes</span>
+</div>
+<app-treemap [height]="768" [width]="1024" [data]="data" (itemHover)="displayItem($event)"></app-treemap>
