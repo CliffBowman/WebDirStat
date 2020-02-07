@@ -23,19 +23,19 @@ export class FolderStatsComponent implements OnInit {
     this.viewFolders();
   }
 
-  private viewFolders() {
+  public viewFolders() {
     this.treemapService.getFolderStats(this.pathControl.value).subscribe((response: JSON) => {
       this.data = response;
     }, error => console.error(error));
   }
 
-  private viewFiles() {
+  public viewFiles() {
     this.treemapService.getFileStats(this.pathControl.value).subscribe((response: JSON) => {
       this.data = response;
     }, error => console.error(error));
   }
 
-  private displayItem(item: ITreemapItem) {
+  public displayItem(item: ITreemapItem) {
     console.log(item);
     this.itemPath = item.path;
     this.itemSize = item.size;
