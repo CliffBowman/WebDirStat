@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using WebDirStat.Providers;
 
 namespace Console
@@ -9,8 +10,8 @@ namespace Console
         {
             var fss = new FilesystemStats();
             //var result = fss.BuildFileTree(@"C:\\Temp");
-            
 
+            DriveInfo.GetDrives();
         }
     }
 }

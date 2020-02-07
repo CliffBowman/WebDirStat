@@ -8,12 +8,14 @@ import { AppComponent } from './app.component';
 import { TreemapComponent } from './treemap/treemap.component';
 import { TreemapService } from './treemap/treemap.service';
 import { FolderStatsComponent } from './filesystem-stats/filesystem-stats.component';
+import { LeftNavComponent } from './left-nav/left-nav.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TreemapComponent,
     FolderStatsComponent,
+    LeftNavComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

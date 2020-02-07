@@ -23,4 +23,13 @@ export class TreemapService {
       path: path,
     });
   }
+
+  public getDrives(): Observable<IDriveInfo[]> {
+    return this.httpClient.get<IDriveInfo[]>(`${this.baseUrl}FilesystemStats/GetDrives`);
+  }
+}
+
+export interface IDriveInfo {
+  name: string;
+  volumeLabel: string;
 }

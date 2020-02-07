@@ -1,0 +1,12 @@
+<ul>
+  <li>C:</li>
+  <li>D:</li>
+  <li>
+    <span>Folder:</span>
+    <input type="text" [formControl]="pathControl" (keydown.enter)="viewFiles()" />
+  </li>
+</ul>
+<div>
+  <button type="button" (click)="viewFiles()">View Files</button>
+  <button type="button" (click)="viewFolders()">View Folders</button>
+</div>

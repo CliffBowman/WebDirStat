@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using WebDirStat.Providers;
 
 namespace WebDirStat.Controllers
@@ -33,10 +36,30 @@ namespace WebDirStat.Controllers
         {
             return _cache.GetOrCreate($"{nameof(FilesystemStatsController)}_{nameof(GetFileStats)}_{request.Path}", (ce) => _filesystemStats.GetFileStatsJson(request.Path));
         }
+
+        [HttpGet]
+        [Route("GetDrives")]
+        public IEnumerable<DriveInfoDesc> GetDrives()
+        {
+            return DriveInfo.GetDrives()
+                .Where(di => di.IsReady)
+                .Select(di => new DriveInfoDesc
+                {
+                    Name = di.Name,
+                    VolumeLabel = di.VolumeLabel,
+                })
+                .AsEnumerable();
+        }
     }
 
     public class FolderStatsRequest
     {
         public string Path { get; set; }
+    }
+
+    public class DriveInfoDesc
+    {
+        public string Name { get; set; }
+        public string VolumeLabel { get; set; }
     }
 }
