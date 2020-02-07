@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import * as d3 from 'd3';
 import { ITreemapItem } from './treemap-item';
 
@@ -19,8 +19,14 @@ export class TreemapComponent implements OnChanges {
   @Input()
   public data: JSON;
 
+  @Input()
+  public fillColor: string = 'cadetblue';
+
+  @Input()
+  public selectedColor: string = 'red';
+
   @Output()
-  public itemHover: EventEmitter<ITreemapItem> = new EventEmitter<ITreemapItem>();
+  public itemClick: EventEmitter<ITreemapItem> = new EventEmitter<ITreemapItem>();
 
   public ngOnChanges(changes: any) {
     if (changes.data && changes.data.currentValue) {
@@ -28,15 +34,12 @@ export class TreemapComponent implements OnChanges {
     }
   }
 
-  public onHoverEnter(d: any) {
+  private onClick(node: any) {
     const item: ITreemapItem = {
-      path: d.data.name,
-      size: d.data.value,
+      path: node.data.name,
+      size: node.data.value,
     };
-    this.itemHover.emit(item);
-  }
-
-  public onHoverExit() {
+    this.itemClick.emit(item);
   }
 
   private build(data: JSON) {
@@ -48,55 +51,30 @@ export class TreemapComponent implements OnChanges {
     var treemapLayout = d3.treemap()
       .size([this.width, this.height]);
 
-    root.sum((d: any) => d.value);
+    root.sum((node: any) => node.value);
     treemapLayout(root);
-
-    var descendants = root.descendants()
-      //.filter(d => d.data.name.indexOf('.vs') != -1)
-      //.filter(d => d.value > 1000000)
-      ;
 
     var nodes = d3.select('svg')
       .selectAll('g')
-      .data(descendants)
+      .data(root.descendants())
       .enter()
       .append('g')
-      .attr('transform', (d: any) => 'translate(' + [d.x0, d.y0] + ')')
-      .attr('data-name', (d: any) => {
-        return d.data.name;
-      })
-      .on('click', function (d, i) {
+      .attr('transform', (node: any) => `translate(${[node.x0, node.y0]})`)
+      .attr('data-name', (node: any) => node.data.name)
+      .on('click', function (node: any) {
         d3.select(this)
           .selectAll('rect')
-          .attr('fill', 'red');
-
-        _this.onHoverEnter(d);
+          .attr('fill', _this.selectedColor);
+        _this.onClick(node);
       })
-      //.on('mouseout', function (d, i) {
-      //  d3.select(this)
-      //    .selectAll('rect')
-      //    .attr('fill', 'cadetblue');
-
-      //  _this.onHoverExit();
-      //})
-      .attr('data-value', (d: any) => d.value)
+      .attr('data-value', (node: any) => node.value)
       ;
 
     nodes
       .append('rect')
-      .attr('width', (d: any) => d.x1 - d.x0)
-      .attr('height', (d: any) => d.y1 - d.y0)
-      .attr('fill', 'cadetblue')
-      //.attr('stroke', d => 'black')
-
+      .attr('width', (node: any) => node.x1 - node.x0)
+      .attr('height', (node: any) => node.y1 - node.y0)
+      .attr('fill', this.fillColor)
       ;
-
-    //nodes
-    //  .append('text')
-    //  .attr('dx', 4)
-    //  .attr('dy', 14)
-    //  .text(function (d) {
-    //    return d.data.name;
-    //  })
   }
 }

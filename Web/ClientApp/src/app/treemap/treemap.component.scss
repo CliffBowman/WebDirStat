@@ -1,5 +1,11 @@
-::ng-deep rect {
-  /*fill: cadetblue;*/
-  opacity: 0.3;
-  stroke: white;
+::ng-deep {
+  rect {
+    /*fill: cadetblue;*/
+    opacity: 0.3;
+    stroke: white;
+  }
+
+  rect:hover {
+    cursor: pointer;
+  }
 }

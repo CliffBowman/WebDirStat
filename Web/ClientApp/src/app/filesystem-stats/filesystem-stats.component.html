@@ -11,4 +11,4 @@
   <span>Size</span>
   <span>{{itemSize | number}} bytes</span>
 </div>
-<app-treemap [height]="768" [width]="1024" [data]="data" (itemHover)="displayItem($event)"></app-treemap>
+<app-treemap [height]="768" [width]="1024" [data]="data" (itemClick)="displayItem($event)"></app-treemap>
