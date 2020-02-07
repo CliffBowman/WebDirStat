@@ -1,7 +1,7 @@
 <div>
-  <input type="text" [formControl]="pathControl" (keydown.enter)="viewFolders()" />
-  <button type="button" (click)="viewFolders()">View Folders</button>
+  <input type="text" [formControl]="pathControl" (keydown.enter)="viewFiles()" />
   <button type="button" (click)="viewFiles()">View Files</button>
+  <button type="button" (click)="viewFolders()">View Folders</button>
 </div>
 <div>
   <span>Path</span>
