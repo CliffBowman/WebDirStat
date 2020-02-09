@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { TreemapComponent } from './treemap/treemap.component';
 import { TreemapService } from './treemap/treemap.service';
 import { FolderStatsComponent } from './filesystem-stats/filesystem-stats.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { FolderStatsComponent } from './filesystem-stats/filesystem-stats.compon
       { path: '', component: FolderStatsComponent, pathMatch: 'full' },
     ]),
     ReactiveFormsModule,
+    BrowserAnimationsModule,
   ],
   providers: [
     TreemapService
