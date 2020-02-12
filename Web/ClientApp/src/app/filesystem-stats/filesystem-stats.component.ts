@@ -20,7 +20,7 @@ export class FolderStatsComponent implements OnInit {
 
   public ngOnInit() {
     this.pathControl = new FormControl('C:\\Program Files');
-    this.viewFolders();
+    this.viewFiles();
   }
 
   public viewFolders() {

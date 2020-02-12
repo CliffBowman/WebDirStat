@@ -1,6 +1,12 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, ViewChild, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 import { ITreemapItem } from './treemap-item';
+import { HierarchyRectangularNode } from 'd3';
+
+interface IHierarchyLeafNode {
+  name: string;
+  value: number;
+}
 
 @Component({
   selector: 'app-treemap',
@@ -28,6 +34,9 @@ export class TreemapComponent implements OnChanges {
   @Output()
   public itemClick: EventEmitter<ITreemapItem> = new EventEmitter<ITreemapItem>();
 
+  @ViewChild('canvasContainer')
+  public canvasContainer: ElementRef;
+
   public ngOnChanges(changes: any) {
     if (changes.data && changes.data.currentValue) {
       this.build(changes.data.currentValue);
@@ -44,37 +53,55 @@ export class TreemapComponent implements OnChanges {
 
   private build(data: JSON) {
 
-    d3.selectAll('g').remove();
+    d3.select(this.canvasContainer.nativeElement).select('canvas').remove();
 
-    var _this = this;
-    var root = d3.hierarchy(data);
-    var treemapLayout = d3.treemap()
+    let _this = this;
+    let root = d3.hierarchy(data);
+    let treemapLayout = d3.treemap()
       .size([this.width, this.height]);
 
     root.sum((node: any) => node.value);
     treemapLayout(root);
 
-    var nodes = d3.select('svg')
-      .selectAll('g')
-      .data(root.descendants())
-      .enter()
-      .append('g')
-      .attr('transform', (node: any) => `translate(${[node.x0, node.y0]})`)
-      .attr('data-name', (node: any) => node.data.name)
-      .on('click', function (node: any) {
-        d3.select(this)
-          .selectAll('rect')
-          .attr('fill', _this.selectedColor);
-        _this.onClick(node);
-      })
-      .attr('data-value', (node: any) => node.value)
+    //Create the canvas and context
+    let canvas = d3.select(this.canvasContainer.nativeElement)
+      .append("canvas")
+      .attr("id", "canvas")
+      .attr("width", this.width)
+      .attr("height", this.height);
+
+    let context = canvas.node().getContext("2d");
+    context.clearRect(0, 0, this.width, this.height);
+
+    let dataset = root.descendants()
+      .slice(1)
+      .filter(d => d.value > 100000)
       ;
 
-    nodes
-      .append('rect')
-      .attr('width', (node: any) => node.x1 - node.x0)
-      .attr('height', (node: any) => node.y1 - node.y0)
-      .attr('fill', this.fillColor)
-      ;
+    //Select our dummy nodes and draw the data to canvas.
+    dataset.forEach(function (d: any) {
+
+      let node = d3.select(this);
+      let colorValue = (d.value * 10) / root.value;
+      let width = d.x1 - d.x0;
+      let height = d.y1 - d.y0;
+
+      context.fillStyle = d3.interpolateGreys(colorValue);
+      context.fillRect(d.x0, d.y0, width, height);
+      context.strokeRect(d.x0, d.y0, width, height);
+
+    });
+
+    canvas.on("click", function () {
+
+      let xy = d3.mouse(this);
+      let x = xy[0];
+      let y = xy[1];
+      let item: HierarchyRectangularNode<IHierarchyLeafNode> = <HierarchyRectangularNode<any>>dataset
+        .find((d: HierarchyRectangularNode<any>) => x > d.x0 && x < d.x1 && y > d.y0 && y < d.y1 && d.data.value);
+
+      _this.onClick(item);
+
+    });
   }
 }
